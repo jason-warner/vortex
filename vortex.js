@@ -39,8 +39,12 @@ const awaitElement = async (id) => {
 const vortexLogic = (xAxis, yAxis, radius, angle, index) => {
     const targetNode = document.getElementById(`node-${index}`);
     const rotate = (a) => {
-        const px = xAxis + radius * Math.cos(a);
-        const py = yAxis + radius * Math.sin(a);
+        let newRadius = radius;
+        if (radius > 0) {
+            newRadius = radius - (index * 2);
+        }
+        const px = xAxis + newRadius * Math.cos(a);
+        const py = yAxis + newRadius * Math.sin(a);
         targetNode.style.left = px + "px";
         targetNode.style.top = py + "px";
     }
@@ -50,7 +54,7 @@ const vortexLogic = (xAxis, yAxis, radius, angle, index) => {
             rotate(angle);
         }, 5);
         intervals.push(interval);
-    }, numOfNodes * index);
+    }, (numOfNodes / 2) * index);
     timeouts.push(timeout);
 }
 
@@ -58,7 +62,7 @@ const vortexLogic = (xAxis, yAxis, radius, angle, index) => {
 const execVortex = () => {
     const xAxis = window.innerWidth / 2;
     const yAxis = window.innerHeight / 2;
-    const radius = 50;
+    const radius = 500;
     let angle = 0;
     for (i = 0; i < numOfNodes; ++i) {
         vortexLogic(xAxis, yAxis, radius, angle, i);
