@@ -35,11 +35,12 @@ const awaitElement = async (id) => {
     return document.getElementById(id);
 };
 
-const createNodeStream = (xAxis, yAxis, radius, angle, index) => {
+
+const vortexLogic = (xAxis, yAxis, radius, angle, index) => {
     const targetNode = document.getElementById(`node-${index}`);
     const rotate = (a) => {
-        var px = xAxis + radius * Math.cos(a);
-        var py = yAxis + radius * Math.sin(a);
+        const px = xAxis + radius * Math.cos(a);
+        const py = yAxis + radius * Math.sin(a);
         targetNode.style.left = px + "px";
         targetNode.style.top = py + "px";
     }
@@ -53,31 +54,36 @@ const createNodeStream = (xAxis, yAxis, radius, angle, index) => {
     timeouts.push(timeout);
 }
 
-const vortexLogic = () => {
+
+const execVortex = () => {
     const xAxis = window.innerWidth / 2;
     const yAxis = window.innerHeight / 2;
     const radius = 50;
     let angle = 0;
-
     for (i = 0; i < numOfNodes; ++i) {
-        createNodeStream(xAxis, yAxis, radius, angle, i);
+        vortexLogic(xAxis, yAxis, radius, angle, i);
     }
 }
 
-const createVortex = () => {
+
+const start = () => {
     generateNodes();
-    awaitElement('vortex-nodes').then(() => vortexLogic())
+    awaitElement('vortex-nodes').then(() => execVortex())
+}
+
+
+const stop = () => {
+    for (let i = 0; i < timeouts?.length; i++) { clearTimeout(timeouts[i]); }
+    timeouts = [];
+    for (let i = 0; i < intervals?.length; i++) { clearInterval(intervals[i]); }
+    intervals = [];
+    document.getElementById('vortex-nodes').remove();
 }
 
 
 const handleStartStop = () => {
-    if (!!(timeouts?.length > 0) || !!(intervals?.length > 0)) {
-        for (let i = 0; i < timeouts?.length; i++) { clearTimeout(timeouts[i]); }
-        timeouts = [];
-        for (let i = 0; i < intervals?.length; i++) { clearInterval(intervals[i]); }
-        intervals = [];
-        document.getElementById('vortex-nodes').remove();
-    } else if (!!(timeouts?.length < 1) && !!(intervals?.length < 1)) { createVortex(); }
+    if (!!(timeouts?.length > 0) || !!(intervals?.length > 0)) { stop(); }
+    else if (!!(timeouts?.length < 1) && !!(intervals?.length < 1)) { start(); }
 }
 
 
