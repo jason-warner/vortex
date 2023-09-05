@@ -1,6 +1,6 @@
 const root = document.getElementById('root');
 const startStopButton = document.getElementById('start/stop');
-const breakPoint = document.getElementById('start/stop').getBoundingClientRect().width;
+const breakPoint = startStopButton.getBoundingClientRect().width;
 const numOfNodes = window.innerHeight > window.innerWidth ? window.innerWidth / 2 : window.innerHeight / 2;
 let intervals = [];
 let timeouts = [];
