@@ -1,6 +1,7 @@
 const root = document.getElementById('root');
 const startStopButton = document.getElementById('start/stop');
-const numOfNodes = 1000;
+const breakPoint = document.getElementById('start/stop').getBoundingClientRect().width;
+const numOfNodes = window.innerHeight > window.innerWidth ? window.innerWidth / 2 : window.innerHeight / 2;
 let intervals = [];
 let timeouts = [];
 
@@ -39,22 +40,18 @@ const awaitElement = async (id) => {
 const vortexLogic = (xAxis, yAxis, radius, angle, index) => {
     const targetNode = document.getElementById(`node-${index}`);
     const rotate = (a) => {
-        let newRadius = radius;
-        if (radius > 0) {
-            newRadius = radius - (index * 2);
-        }
-        const px = xAxis + newRadius * Math.cos(a);
-        const py = yAxis + newRadius * Math.sin(a);
+        const px = xAxis + radius * Math.cos(a);
+        const py = yAxis + radius * Math.sin(a);
         targetNode.style.left = px + "px";
         targetNode.style.top = py + "px";
     }
     const timeout = setTimeout(() => {
-        const interval = setInterval(function () {
+        const interval = setInterval(() => {
             angle = (angle + Math.PI / 360) % (Math.PI * 2);
             rotate(angle);
         }, 5);
         intervals.push(interval);
-    }, (numOfNodes / 2) * index);
+    }, 500 * index);
     timeouts.push(timeout);
 }
 
@@ -62,10 +59,13 @@ const vortexLogic = (xAxis, yAxis, radius, angle, index) => {
 const execVortex = () => {
     const xAxis = window.innerWidth / 2;
     const yAxis = window.innerHeight / 2;
-    const radius = 500;
+    const radius = numOfNodes / 2;
     let angle = 0;
     for (i = 0; i < numOfNodes; ++i) {
-        vortexLogic(xAxis, yAxis, radius, angle, i);
+        const newRadius = radius - (i * 2);
+        if (newRadius > breakPoint) {
+            vortexLogic(xAxis, yAxis, newRadius, angle, i);
+        }
     }
 }
 
